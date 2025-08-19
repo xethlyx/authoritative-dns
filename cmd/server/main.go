@@ -32,6 +32,7 @@ type Config struct {
 	Fqdn string `json:"fqdn"`
 	Key string `json:"key"`
 	DefaultService string `json:"defaultService"`
+	Port int `json:"port"`
 }
 
 var config Config
@@ -304,13 +305,12 @@ func main() {
 
 	slog.Info("cache synced")
 
-	port := 53
-	slog.Info("starting dns server", "port", port)
+	slog.Info("starting dns server", "port", config.Port)
 
 	dnsShutdown := make(chan struct{})
 
 	dns.HandleFunc(config.Fqdn+".", handleDnsRequest)
-	server := &dns.Server{Addr: ":" + strconv.Itoa(port), Net: "udp"}
+	server := &dns.Server{Addr: ":" + strconv.Itoa(config.Port), Net: "udp"}
 	go func() {
 		err = server.ListenAndServe()
 		if err != nil {

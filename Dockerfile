@@ -21,6 +21,5 @@ FROM gcr.io/distroless/base-debian12 AS build-release-stage
 WORKDIR /
 COPY --from=build-stage /authoritative-dns /authoritative-dns
 
-EXPOSE 8000
 USER nonroot:nonroot
 ENTRYPOINT ["/authoritative-dns"]

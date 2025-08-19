@@ -153,13 +153,14 @@ func parseQuery(m *dns.Msg) {
 	 	} else {
 			subdomain := strings.TrimSuffix(q.Name, "."+config.Fqdn+".")
 			if subdomain == q.Name {
-				m.SetRcode(m, dns.RcodeNotZone)
+				m.SetRcode(m, dns.RcodeNotAuth)
 				return
 			}
 
 			var ok bool
 			record, ok = records[subdomain]
 			if !ok {
+				m.SetRcode(m, dns.RcodeNameError)
 				continue
 			}
 		}

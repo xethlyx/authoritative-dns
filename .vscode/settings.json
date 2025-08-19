@@ -1,0 +1,11 @@
+{
+    "cSpell.words": [
+        "apimachinery",
+        "clientcmd",
+        "clientset",
+        "kubeconfig",
+        "metav",
+        "miekg",
+        "Qtype"
+    ]
+}

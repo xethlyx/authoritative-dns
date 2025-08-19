@@ -275,8 +275,10 @@ func main() {
 			newSvc := newObj.(*v1.Service)
 
 			if shouldTrack(oldSvc) == shouldTrack(newSvc) {
-				endTrack(oldSvc)
-				beginTrack(newSvc)
+				if shouldTrack(newSvc) {
+					endTrack(oldSvc)
+					beginTrack(newSvc)
+				}
 				return
 			}
 

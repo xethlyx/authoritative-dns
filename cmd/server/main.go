@@ -312,21 +312,37 @@ func main() {
 	dnsShutdown := make(chan struct{})
 
 	dns.HandleFunc(config.Fqdn+".", handleDnsRequest)
-	server := &dns.Server{Addr: ":" + strconv.Itoa(config.Port), Net: "udp"}
+	tcpServer := &dns.Server{Addr: ":" + strconv.Itoa(config.Port), Net: "tcp"}
+	udpServer := &dns.Server{Addr: ":" + strconv.Itoa(config.Port), Net: "udp"}
 	go func() {
-		err = server.ListenAndServe()
+		err = tcpServer.ListenAndServe()
 		if err != nil {
-			slog.Error("dns server crashed", "err", err.Error())
+			slog.Error("tcp dns server crashed", "err", err.Error())
 			os.Exit(1)
 		}
 
-		slog.Info("stopped dns server")
+		slog.Info("stopped tcp dns server")
+		dnsShutdown<-struct{}{}
+	}()
+	go func() {
+		err = udpServer.ListenAndServe()
+		if err != nil {
+			slog.Error("udp dns server crashed", "err", err.Error())
+			os.Exit(1)
+		}
+
+		slog.Info("stopped udp dns server")
 		dnsShutdown<-struct{}{}
 	}()
 
 	<-rootCtx.Done()
-	if err := server.Shutdown(); err != nil {
-		slog.Error("failed to shutdown server", "err", err)
+	if err := tcpServer.Shutdown(); err != nil {
+		slog.Error("failed to shutdown tcp server", "err", err)
+	} else {
+		<-dnsShutdown
+	}
+	if err := udpServer.Shutdown(); err != nil {
+		slog.Error("failed to shutdown udp server", "err", err)
 	} else {
 		<-dnsShutdown
 	}

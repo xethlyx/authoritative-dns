@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /authoritative-dns
+RUN CGO_ENABLED=0 GOOS=linux go build ./cmd/server -o /authoritative-dns
 
 # Run the tests in the container
 # FROM build-stage AS run-test-stage

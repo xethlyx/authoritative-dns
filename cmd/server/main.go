@@ -113,7 +113,7 @@ func beginTrack(svc *v1.Service) {
 			}
 
 			if isIPv6(ip.IP) {
-				output.aaaa = append(output.a, ip.IP)
+				output.aaaa = append(output.aaaa, ip.IP)
 			} else {
 				output.a = append(output.a, ip.IP)
 			}
